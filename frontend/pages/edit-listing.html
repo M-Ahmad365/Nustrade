@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Listing — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .edit-layout {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-4) var(--space-16);
+    }
+    .existing-image-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+    .existing-img-item {
+      aspect-ratio: 1;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      background: var(--surface);
+    }
+    .existing-img-item img { width:100%; height:100%; object-fit:cover; }
+    .img-remove-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity var(--duration-fast) var(--ease-out);
+    }
+    .existing-img-item:hover .img-remove-overlay { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<header class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a href="/index.html" class="navbar-logo">
+      <span class="navbar-logo-mark">N</span>
+      NusTrade
+    </a>
+    <div style="margin-left:auto; display:flex; gap: var(--space-3);">
+      <a id="viewListingLink" href="#" class="btn btn-ghost btn-sm">View listing</a>
+      <a href="/pages/my-listings.html" class="btn btn-ghost btn-sm">Cancel</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="edit-layout">
+
+    <!-- Skeleton -->
+    <div id="loadingSkeleton">
+      <div class="skeleton skeleton-line skeleton-line-medium mb-2" style="height:28px;"></div>
+      <div class="skeleton skeleton-line skeleton-line-short mb-8" style="height:16px;"></div>
+      <div class="skeleton" style="height:150px; border-radius: var(--radius-lg); margin-bottom: var(--space-4);"></div>
+      <div class="skeleton" style="height:44px; border-radius: var(--radius-md); margin-bottom: var(--space-4);"></div>
+      <div class="skeleton" style="height:120px; border-radius: var(--radius-md); margin-bottom: var(--space-4);"></div>
+    </div>
+
+    <!-- Form -->
+    <div id="editContent" style="display:none;">
+      <div style="margin-bottom: var(--space-8);">
+        <h1 style="font-size: var(--text-2xl); font-weight:600; letter-spacing:-0.3px; margin-bottom: var(--space-2);">Edit listing</h1>
+        <p style="color: var(--steel);">Changes save immediately on submit.</p>
+      </div>
+
+      <form id="editListingForm" novalidate>
+
+        <!-- Existing images -->
+        <div class="form-group mb-4">
+          <label class="form-label">Current photos</label>
+          <div class="existing-image-grid" id="existingImages"></div>
+        </div>
+
+        <!-- Add more images -->
+        <div class="form-group mb-6">
+          <label class="form-label">Add more photos</label>
+          <div class="upload-area" id="uploadArea" tabindex="0" role="button" aria-label="Upload more photos">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--stone)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <p style="font-size: var(--text-sm); color: var(--steel);">Click or drag photos here</p>
+            <input type="file" id="imageInput" name="images" accept="image/*" multiple>
+          </div>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label" for="title">Title</label>
+          <input type="text" class="form-input" id="title" name="title" placeholder="Item title" maxlength="120" required>
+          <span class="form-error" id="titleError" style="display:none;"></span>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label" for="description">Description</label>
+          <textarea class="form-textarea" id="description" name="description" rows="5" required></textarea>
+          <span class="form-error" id="descriptionError" style="display:none;"></span>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4);">
+          <div class="form-group">
+            <label class="form-label" for="price">Price (PKR)</label>
+            <input type="number" class="form-input" id="price" name="price" min="0" required>
+            <span class="form-error" id="priceError" style="display:none;"></span>
+          </div>
+          <div class="form-group" style="justify-content:flex-end; padding-top: var(--space-6);">
+            <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-base);">
+              <input type="checkbox" id="isNegotiable" style="accent-color: var(--primary); width:16px; height:16px;">
+              Negotiable
+            </label>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4);">
+          <div class="form-group">
+            <label class="form-label" for="category">Category</label>
+            <select class="form-select" id="category" name="categoryId" required>
+              <option value="">Select category</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="condition">Condition</label>
+            <select class="form-select" id="condition" name="condition" required>
+              <option value="">Select condition</option>
+              <option value="new">New</option>
+              <option value="like_new">Like New</option>
+              <option value="good">Good</option>
+              <option value="fair">Fair</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group mb-6">
+          <label class="form-label" for="locationHostel">Location / Hostel <span style="color:var(--color-danger);">*</span></label>
+          <select class="form-input" id="locationHostel" name="location_hostel" required>
+            <option value="" disabled selected>Select location</option>
+            <option value="off_campus">Off Campus</option>
+            <optgroup label="Boys Hostels">
+              <option value="Ghazali">Ghazali</option>
+              <option value="Razi">Razi</option>
+              <option value="Rahmat">Rahmat</option>
+              <option value="Attar">Attar</option>
+              <option value="Liaquat">Liaquat</option>
+              <option value="Hajveri">Hajveri</option>
+              <option value="Zakria">Zakria</option>
+              <option value="Johar">Johar</option>
+              <option value="Berouni">Berouni</option>
+              <option value="Rumi">Rumi</option>
+            </optgroup>
+            <optgroup label="Girls Hostels">
+              <option value="Fatima">Fatima</option>
+              <option value="Amna">Amna</option>
+              <option value="Khadija">Khadija</option>
+            </optgroup>
+          </select>
+          <span class="form-error" id="locationError" style="display:none;"></span>
+        </div>
+
+        <div id="formError" class="form-error mb-4" role="alert" style="display:none;"></div>
+
+        <div style="display:flex; gap: var(--space-3);">
+          <button type="submit" class="btn btn-primary" style="flex:1; height:48px;" id="submitBtn">Save changes</button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</main>
+
+<div id="toast-container"></div>
+<script src="../js/utils.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/router.js"></script>
+<script src="../js/pages/edit-listing.js"></script>
+<div class="sunset-stripe"></div>
+</body>
+</html>

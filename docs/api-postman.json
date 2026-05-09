@@ -1,0 +1,1039 @@
+{
+  "info": {
+    "name": "NusTrade API",
+    "description": "Student-only marketplace for NUST Islamabad. All endpoints prefixed with /api/v1. Protected routes require: Authorization: Bearer <token>",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "nustrade-v1"
+  },
+  "variable": [
+    { "key": "base", "value": "http://localhost:4000/api/v1" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "listingId", "value": "" },
+    { "key": "offerId", "value": "" },
+    { "key": "txId", "value": "" },
+    { "key": "threadId", "value": "" },
+    { "key": "notifId", "value": "" },
+    { "key": "reviewId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base}}/auth/signup",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@nust.edu.pk\",\n  \"password\": \"Secret123\",\n  \"full_name\": \"Ali Hassan\",\n  \"department\": \"SEECS\",\n  \"semester\": 5,\n  \"residence_type\": \"hostellite\",\n  \"hostel_name\": \"H4\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": null,\n  \"message\": \"OTP sent to student@nust.edu.pk — valid for 10 minutes\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base}}/auth/verify-otp",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@nust.edu.pk\",\n  \"otp\": \"123456\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"token\": \"eyJhbGciOiJIUzI1NiJ9...\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Resend OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base}}/auth/resend-otp",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@nust.edu.pk\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.success) pm.collectionVariables.set('token', d.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@nust.edu.pk\",\n  \"password\": \"Secret123\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"token\": \"eyJhbGciOiJIUzI1NiJ9...\" }\n}"
+            },
+            {
+              "name": "401 Wrong password",
+              "status": "Unauthorized",
+              "code": 401,
+              "body": "{\n  \"success\": false,\n  \"error\": { \"code\": \"INVALID_CREDENTIALS\", \"message\": \"Invalid email or password\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base}}/auth/forgot-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@nust.edu.pk\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base}}/auth/reset-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@nust.edu.pk\",\n  \"otp\": \"654321\",\n  \"new_password\": \"NewPass456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/auth/change-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"Secret123\",\n  \"new_password\": \"NewSecret456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/auth/logout"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": null,\n  \"message\": \"Logged out\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/users/me"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"user_id\": 1,\n    \"email\": \"student@nust.edu.pk\",\n    \"full_name\": \"Ali Hassan\",\n    \"department\": \"SEECS\",\n    \"semester\": 5,\n    \"residence_type\": \"hostellite\",\n    \"hostel_name\": \"H4\",\n    \"aggregate_rating\": \"4.50\",\n    \"total_reviews\": 3,\n    \"total_sales\": 2\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/users/me",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"SEECS student, selling CS textbooks and electronics.\",\n  \"phone_number\": \"03001234567\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Upload Profile Picture",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/users/me/profile-picture",
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "avatar", "type": "file", "src": "/path/to/photo.jpg" }]
+            }
+          }
+        },
+        {
+          "name": "Get Public Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/users/{{userId}}"
+          }
+        },
+        {
+          "name": "Get User Listings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/users/{{userId}}/listings"
+          }
+        },
+        {
+          "name": "Get User Reviews",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/users/{{userId}}/reviews"
+          }
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/users/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listings",
+      "item": [
+        {
+          "name": "Home Feed",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base}}/listings?sort=recommended&page=1&limit=20",
+              "query": [
+                { "key": "sort", "value": "recommended" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"listings\": [\n      {\n        \"listing_id\": 1,\n        \"title\": \"Calculus by Stewart 8th Edition\",\n        \"price\": 1500,\n        \"is_negotiable\": true,\n        \"condition\": \"good\",\n        \"status\": \"active\",\n        \"category_slug\": \"books\",\n        \"seller_name\": \"Ali Hassan\",\n        \"seller_rating\": \"4.50\",\n        \"thumbnail_url\": \"/uploads/listings/1/abc.jpg\"\n      }\n    ],\n    \"page\": 1,\n    \"limit\": 20\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Home Feed (Filtered)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base}}/listings?category=books&min_price=500&max_price=3000&condition=good&sort=price_asc",
+              "query": [
+                { "key": "category", "value": "books" },
+                { "key": "min_price", "value": "500" },
+                { "key": "max_price", "value": "3000" },
+                { "key": "condition", "value": "good" },
+                { "key": "sort", "value": "price_asc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Trending",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/listings/trending"
+          }
+        },
+        {
+          "name": "Full-Text Search",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base}}/listings/search?q=calculus+book&sort=relevance",
+              "query": [
+                { "key": "q", "value": "calculus book" },
+                { "key": "sort", "value": "relevance" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Listing by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/listings/{{listingId}}"
+          }
+        },
+        {
+          "name": "Create Listing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.success) pm.collectionVariables.set('listingId', d.data.listing.listing_id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/listings",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Calculus by Stewart 8th Edition" },
+                { "key": "description", "value": "Barely used. No highlights or notes. Ideal for MATH-101 and MATH-102 courses. Bought in 4th semester." },
+                { "key": "category", "value": "books" },
+                { "key": "condition", "value": "good" },
+                { "key": "price", "value": "1500" },
+                { "key": "is_negotiable", "value": "true" },
+                { "key": "location_hostel", "value": "H4" },
+                { "key": "course_code", "value": "MATH-101" },
+                { "key": "images", "type": "file", "src": "/path/to/image.jpg" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"listing\": {\n      \"listing_id\": 1,\n      \"title\": \"Calculus by Stewart 8th Edition\",\n      \"status\": \"active\",\n      \"price\": 1500\n    },\n    \"images\": [\"/uploads/listings/1/abc.jpg\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Listing",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/listings/{{listingId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 1200,\n  \"description\": \"Price dropped — must sell before end of semester. Good condition.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Listing",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/listings/{{listingId}}"
+          }
+        },
+        {
+          "name": "Boost Listing",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/listings/{{listingId}}/boost"
+          }
+        },
+        {
+          "name": "Add Image",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/listings/{{listingId}}/images",
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "image", "type": "file", "src": "/path/to/extra.jpg" }]
+            }
+          }
+        },
+        {
+          "name": "Remove Image",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/listings/{{listingId}}/images/1"
+          }
+        },
+        {
+          "name": "Report Listing",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/listings/{{listingId}}/report",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"scam\",\n  \"details\": \"Seller is asking for advance payment and not responding.\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Offers",
+      "item": [
+        {
+          "name": "Create Offer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.success) pm.collectionVariables.set('offerId', d.data.offer.offer_id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/offers",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listing_id\": 1,\n  \"proposed_price\": 1200,\n  \"message\": \"Can you do 1200? I'll pick it up today from H4.\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"offer\": {\n      \"offer_id\": 1,\n      \"listing_id\": 1,\n      \"proposed_price\": 1200,\n      \"status\": \"pending\",\n      \"expires_at\": \"2025-01-02T10:00:00Z\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "My Sent Offers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/offers/sent"
+          }
+        },
+        {
+          "name": "My Received Offers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/offers/received"
+          }
+        },
+        {
+          "name": "Accept Offer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.success) pm.collectionVariables.set('txId', d.data.transaction.transaction_id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/offers/{{offerId}}/accept"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"transaction\": {\n      \"transaction_id\": 1,\n      \"status\": \"pending_completion\",\n      \"agreed_price\": 1200\n    }\n  },\n  \"message\": \"Offer accepted — transaction created\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Reject Offer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/offers/{{offerId}}/reject"
+          }
+        },
+        {
+          "name": "Counter Offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/offers/{{offerId}}/counter",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proposed_price\": 1350,\n  \"message\": \"Best I can do is 1350 — it's like new condition.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cancel Offer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/offers/{{offerId}}/cancel"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "My Transactions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/transactions"
+          }
+        },
+        {
+          "name": "Get Transaction",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/transactions/{{txId}}"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"transaction\": {\n      \"transaction_id\": 1,\n      \"status\": \"pending_completion\",\n      \"agreed_price\": 1200,\n      \"buyer_confirmed_at\": null,\n      \"seller_confirmed_at\": null,\n      \"listing_title\": \"Calculus by Stewart 8th Edition\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Confirm (Buyer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/transactions/{{txId}}/confirm-buyer"
+          }
+        },
+        {
+          "name": "Confirm (Seller)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/transactions/{{txId}}/confirm-seller"
+          }
+        },
+        {
+          "name": "Cancel Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/transactions/{{txId}}/cancel",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Seller no longer has the item — it was accidentally damaged.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Dispute Transaction",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/transactions/{{txId}}/dispute"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Start Chat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.success) pm.collectionVariables.set('threadId', d.data.thread.thread_id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/chat/start",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listing_id\": 1,\n  \"seller_id\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "My Threads",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/chat/threads"
+          }
+        },
+        {
+          "name": "Get Thread",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/chat/threads/{{threadId}}"
+          }
+        },
+        {
+          "name": "Poll Messages (since timestamp)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base}}/chat/threads/{{threadId}}/messages?since=2025-01-01T00:00:00.000Z",
+              "query": [{ "key": "since", "value": "2025-01-01T00:00:00.000Z" }]
+            }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/chat/threads/{{threadId}}/messages",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Is the book still available? Can you hold it until tomorrow?\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Mark Thread as Read",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/chat/threads/{{threadId}}/read"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.success) pm.collectionVariables.set('reviewId', d.data.review.review_id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/reviews",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transaction_id\": 1,\n  \"rating\": 5,\n  \"comment\": \"Great seller — item exactly as described, handed over quickly at H4. Highly recommend.\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"review\": {\n      \"review_id\": 1,\n      \"rating\": 5,\n      \"comment\": \"Great seller...\",\n      \"created_at\": \"2025-01-01T12:00:00Z\"\n    }\n  }\n}"
+            },
+            {
+              "name": "403 Transaction not completed",
+              "code": 403,
+              "body": "{\n  \"success\": false,\n  \"error\": { \"code\": \"TRANSACTION_NOT_COMPLETED\", \"message\": \"Transaction must be completed before leaving a review\" }\n}"
+            },
+            {
+              "name": "409 Already reviewed",
+              "code": 409,
+              "body": "{\n  \"success\": false,\n  \"error\": { \"code\": \"REVIEW_EXISTS\", \"message\": \"You have already reviewed this transaction\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/reviews/{{reviewId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Good seller, minor delay in pickup.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reviews for Transaction",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/reviews/transaction/{{txId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wishlist & Saved Searches",
+      "item": [
+        {
+          "name": "Get Wishlist",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/wishlist"
+          }
+        },
+        {
+          "name": "Add to Wishlist",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/wishlist/{{listingId}}"
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": null,\n  \"message\": \"Added to wishlist\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Remove from Wishlist",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/wishlist/{{listingId}}"
+          }
+        },
+        {
+          "name": "Get Saved Searches",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/saved-searches"
+          }
+        },
+        {
+          "name": "Create Saved Search",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/saved-searches",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"CS Books under 2000\",\n  \"query_text\": \"algorithms data structures\",\n  \"filters_json\": { \"category\": \"books\", \"max_price\": 2000 }\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Saved Search",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/saved-searches/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base}}/notifications?page=1&limit=20",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"notifications\": [\n      {\n        \"_id\": \"6776d0a1b2c3d4e5f6a7b8c9\",\n        \"type\": \"new_offer\",\n        \"payload\": { \"listing_id\": 1, \"offer_id\": 3 },\n        \"read_at\": null,\n        \"created_at\": \"2025-01-01T10:00:00Z\"\n      }\n    ],\n    \"page\": 1,\n    \"limit\": 20\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/notifications/unread-count"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"unread_count\": 3 }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Mark One Read",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/notifications/{{notifId}}/read"
+          }
+        },
+        {
+          "name": "Mark All Read",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/notifications/mark-all-read"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"marked_read\": 3 }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base}}/admin/users?page=1&limit=20&banned=false&verified=true",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "banned", "value": "false" },
+                { "key": "verified", "value": "true" },
+                { "key": "search", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Ban User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/admin/users/{{userId}}/ban"
+          }
+        },
+        {
+          "name": "Unban User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/admin/users/{{userId}}/unban"
+          }
+        },
+        {
+          "name": "List All Listings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base}}/admin/listings?status=active&page=1",
+              "query": [
+                { "key": "status", "value": "active" },
+                { "key": "page", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Force-Remove Listing",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/admin/listings/{{listingId}}/remove"
+          }
+        },
+        {
+          "name": "Get Reports",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/admin/reports"
+          }
+        },
+        {
+          "name": "Resolve Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/admin/reports/1/resolve",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resolution_notes\": \"Listing reviewed — removed for misleading description.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Analytics Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base}}/admin/analytics?course_code=CS-236",
+              "query": [{ "key": "course_code", "value": "CS-236", "disabled": true }]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"total_users\": { \"total\": 120, \"active\": 115, \"verified\": 98, \"banned\": 2 },\n    \"total_listings\": { \"total\": 340, \"active\": 120, \"sold\": 89, \"expired\": 45 },\n    \"total_transactions\": { \"total\": 89, \"completed\": 72, \"total_value_pkr\": 892000 },\n    \"listings_by_category\": [ { \"slug\": \"books\", \"name\": \"Books & Notes\", \"count\": 145 } ],\n    \"top_sellers\": [ { \"user_id\": 3, \"full_name\": \"Sara Malik\", \"revenue\": 45000, \"total_sales\": 12 } ],\n    \"completion_rate\": { \"total\": 89, \"completed\": 72, \"completion_rate_pct\": \"80.90\" },\n    \"avg_time_to_sale\": { \"avg_hours\": 36, \"avg_days\": 2, \"min_days\": 0, \"max_days\": 28 }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Trigger Backup",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base}}/admin/backup"
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"backup_dir\": \"backups/2025-01-01T10-00-00-000Z\", \"timestamp\": \"2025-01-01T10-00-00-000Z\" },\n  \"message\": \"Backup completed\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Send Announcement",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{base}}/admin/announcement",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"NusTrade will be under maintenance on Jan 5 from 2AM-4AM PKT. Please plan accordingly.\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base}}/../health"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"data\": { \"status\": \"ok\" }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

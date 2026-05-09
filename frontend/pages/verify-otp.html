@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Email — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+
+<div class="auth-page page">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/index.html" style="display:inline-flex; align-items:center; gap: var(--space-2); color:var(--ink); font-family: var(--font-display); font-weight:400; font-size:20px; text-decoration:none;">
+        <span class="navbar-logo-mark">N</span>
+        NusTrade
+      </a>
+    </div>
+
+    <div style="text-align:center; margin-bottom: var(--space-6);">
+      <div style="width:64px; height:64px; background: var(--cream-light); border-radius: var(--radius-full); display:flex; align-items:center; justify-content:center; margin: 0 auto var(--space-4);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <h1 class="auth-title">Check your inbox</h1>
+      <p class="auth-subtitle" id="otpSubtitle">We sent a 6-digit code to your email</p>
+    </div>
+
+    <form class="auth-form" id="otpForm" novalidate>
+
+      <div class="form-group">
+        <label class="form-label" style="text-align:center; display:block;">Verification code</label>
+        <div id="otpBoxes" style="display:flex; gap: var(--space-2); justify-content:center; margin-top: var(--space-2);" role="group" aria-label="6-digit verification code">
+          <input class="otp-box form-input" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" aria-label="Digit 1" style="width:48px; height:56px; text-align:center; font-size: var(--text-xl); font-weight:600; padding:0;">
+          <input class="otp-box form-input" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" aria-label="Digit 2" style="width:48px; height:56px; text-align:center; font-size: var(--text-xl); font-weight:600; padding:0;">
+          <input class="otp-box form-input" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" aria-label="Digit 3" style="width:48px; height:56px; text-align:center; font-size: var(--text-xl); font-weight:600; padding:0;">
+          <input class="otp-box form-input" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" aria-label="Digit 4" style="width:48px; height:56px; text-align:center; font-size: var(--text-xl); font-weight:600; padding:0;">
+          <input class="otp-box form-input" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" aria-label="Digit 5" style="width:48px; height:56px; text-align:center; font-size: var(--text-xl); font-weight:600; padding:0;">
+          <input class="otp-box form-input" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" aria-label="Digit 6" style="width:48px; height:56px; text-align:center; font-size: var(--text-xl); font-weight:600; padding:0;">
+        </div>
+        <span class="form-error" id="otpError" role="alert" style="display:none; text-align:center; margin-top: var(--space-2);"></span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="verifyBtn">Verify email</button>
+
+      <div id="formError" class="form-error" role="alert" style="display:none; text-align:center;"></div>
+
+    </form>
+
+    <div class="auth-footer">
+      Didn't receive it?
+      <button class="font-500 text-primary" id="resendBtn" style="background:none; border:none; cursor:pointer; font-size: var(--text-sm);">Resend code</button>
+      <span id="resendTimer" style="display:none; color: var(--stone);"> (wait <span id="resendCountdown">60</span>s)</span>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+var API = 'http://localhost:4000/api/v1';
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('[verify-otp] ready');
+
+  var email = sessionStorage.getItem('verify_email');
+
+  if (!email) {
+    console.warn('[verify-otp] no email in sessionStorage, redirecting to signup');
+    window.location.href = 'signup.html';
+    return;
+  }
+
+  var subtitle = document.getElementById('otpSubtitle');
+  if (subtitle) subtitle.textContent = 'We sent a 6-digit code to ' + email;
+
+  var boxes     = Array.from(document.querySelectorAll('.otp-box'));
+  var verifyBtn = document.getElementById('verifyBtn');
+  var resendBtn = document.getElementById('resendBtn');
+  var otpError  = document.getElementById('otpError');
+  var formError = document.getElementById('formError');
+
+  // OTP box behaviour: auto-advance, backspace, paste
+  boxes.forEach(function(box, i) {
+    box.addEventListener('input', function() {
+      var val = box.value.replace(/\D/g, '');
+      box.value = val ? val[val.length - 1] : '';
+      if (val && i < boxes.length - 1) boxes[i + 1].focus();
+    });
+    box.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !box.value && i > 0) { boxes[i - 1].focus(); boxes[i - 1].value = ''; }
+      if (e.key === 'Enter') document.getElementById('otpForm').dispatchEvent(new Event('submit'));
+    });
+    box.addEventListener('paste', function(e) {
+      e.preventDefault();
+      var pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+      pasted.split('').slice(0, 6).forEach(function(char, j) { if (boxes[j]) boxes[j].value = char; });
+      var nextEmpty = boxes.findIndex(function(b) { return !b.value; });
+      (boxes[nextEmpty] || boxes[5]).focus();
+    });
+  });
+
+  // Submit
+  document.getElementById('otpForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    var otp = boxes.map(function(b) { return b.value; }).join('');
+    console.log('[verify-otp] submitted, otp:', otp);
+
+    otpError.style.display  = 'none'; otpError.textContent  = '';
+    formError.style.display = 'none'; formError.textContent = '';
+
+    if (otp.length !== 6) {
+      otpError.textContent = 'Please enter all 6 digits.';
+      otpError.style.display = '';
+      return;
+    }
+
+    verifyBtn.disabled    = true;
+    verifyBtn.textContent = 'Verifying...';
+
+    try {
+      console.log('[verify-otp] calling API...');
+      var res  = await fetch(API + '/auth/verify-otp', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email: email, otp: otp })
+      });
+      var json = await res.json();
+      console.log('[verify-otp] API response:', json);
+
+      if (json.success) {
+        localStorage.setItem('nm_token', json.data.token);
+        if (json.data.user) localStorage.setItem('nm_user', JSON.stringify(json.data.user));
+        sessionStorage.removeItem('verify_email');
+        window.location.href = '/index.html';
+      } else {
+        var msg = (json.error && json.error.message) || 'Invalid or expired code.';
+        otpError.textContent   = msg;
+        otpError.style.display = '';
+      }
+    } catch(err) {
+      console.error('[verify-otp] fetch error:', err);
+      formError.textContent   = 'Cannot reach server. Is backend running on port 4000?';
+      formError.style.display = '';
+    } finally {
+      verifyBtn.disabled    = false;
+      verifyBtn.textContent = 'Verify email';
+    }
+  });
+
+  // Resend with 60s cooldown
+  var cooldown = null;
+
+  function startCooldown() {
+    var remaining = 60;
+    resendBtn.disabled = true;
+    var timerEl  = document.getElementById('resendTimer');
+    var countEl  = document.getElementById('resendCountdown');
+    if (timerEl) timerEl.style.display = '';
+    if (countEl) countEl.textContent   = remaining;
+
+    cooldown = setInterval(function() {
+      remaining--;
+      if (countEl) countEl.textContent = remaining;
+      if (remaining <= 0) {
+        clearInterval(cooldown);
+        resendBtn.disabled = false;
+        if (timerEl) timerEl.style.display = 'none';
+      }
+    }, 1000);
+  }
+
+  startCooldown();
+
+  resendBtn.addEventListener('click', async function() {
+    try {
+      var res  = await fetch(API + '/auth/resend-otp', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email: email })
+      });
+      var json = await res.json();
+      console.log('[verify-otp] resend response:', json);
+      boxes.forEach(function(b) { b.value = ''; });
+      boxes[0].focus();
+      otpError.style.display  = 'none';
+      formError.style.display = 'none';
+      startCooldown();
+    } catch(err) {
+      console.error('[verify-otp] resend error:', err);
+    }
+  });
+});
+</script>
+<div class="sunset-stripe"></div>
+</body>
+</html>

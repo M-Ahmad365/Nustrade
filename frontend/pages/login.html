@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+
+<div class="auth-page page">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/index.html" style="display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+        <span class="navbar-logo-mark">N</span>
+        <span style="font-family: var(--font-display); font-size:20px; font-weight:400; color:var(--ink);">NusTrade</span>
+      </a>
+    </div>
+
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-subtitle">Sign in with your NUST email</p>
+
+    <form class="auth-form" id="loginForm" novalidate>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email address</label>
+        <input type="email" class="form-input" id="email" name="email" placeholder="you@nust.edu.pk" autocomplete="email" required>
+        <span class="form-error" id="emailError" role="alert" style="display:none"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" class="form-input" id="password" name="password" placeholder="Your password" autocomplete="current-password" required>
+        <span class="form-error" id="passwordError" role="alert" style="display:none"></span>
+      </div>
+
+      <div style="text-align:right; margin-top: -8px;">
+        <a href="/pages/forgot-password.html" style="font-size:13px; color:var(--primary);">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Sign in</button>
+
+      <div id="formError" class="form-error" role="alert" style="display:none; text-align:center;"></div>
+
+    </form>
+
+    <div class="auth-footer">
+      Don't have an account?
+      <a href="/pages/signup.html" class="font-500">Create one</a>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<div class="sunset-stripe"></div>
+
+<script>
+var API = 'http://localhost:4000/api/v1';
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('[login] ready');
+
+  var form        = document.getElementById('loginForm');
+  var emailInput  = document.getElementById('email');
+  var passInput   = document.getElementById('password');
+  var submitBtn   = document.getElementById('submitBtn');
+  var errorDiv    = document.getElementById('formError');
+  var emailErr    = document.getElementById('emailError');
+  var passErr     = document.getElementById('passwordError');
+
+  // Pre-fill email from query string (e.g. after reset password)
+  var params = new URLSearchParams(window.location.search);
+  var prefill = params.get('email') || sessionStorage.getItem('verify_email');
+  if (prefill) emailInput.value = prefill;
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    var email    = emailInput.value.trim();
+    var password = passInput.value;
+    console.log('[login] form submitted', email, password.length);
+
+    // Clear errors
+    errorDiv.style.display = 'none'; errorDiv.textContent = '';
+    emailErr.style.display = 'none'; emailErr.textContent = '';
+    passErr.style.display  = 'none'; passErr.textContent  = '';
+
+    // Only check empty
+    var ok = true;
+    if (!email)    { emailErr.textContent = 'Email is required.';    emailErr.style.display = ''; ok = false; }
+    if (!password) { passErr.textContent  = 'Password is required.'; passErr.style.display  = ''; ok = false; }
+    if (!ok) return;
+
+    submitBtn.disabled     = true;
+    submitBtn.textContent  = 'Signing in...';
+
+    try {
+      console.log('[login] calling API...');
+      var res  = await fetch(API + '/auth/login', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email: email, password: password })
+      });
+      var json = await res.json();
+      console.log('[login] API response:', json);
+
+      if (json.success) {
+        localStorage.setItem('nm_token', json.data.token);
+        if (json.data.user) localStorage.setItem('nm_user', JSON.stringify(json.data.user));
+        sessionStorage.removeItem('verify_email');
+        var next = params.get('next');
+        window.location.href = (next && next.startsWith('/')) ? next : '/index.html';
+      } else {
+        var code = json.error && json.error.code;
+        if (code === 'EMAIL_NOT_VERIFIED') {
+          sessionStorage.setItem('verify_email', email);
+          window.location.href = 'verify-otp.html';
+        } else {
+          errorDiv.textContent   = (json.error && json.error.message) || 'Login failed.';
+          errorDiv.style.display = '';
+        }
+      }
+    } catch(err) {
+      console.error('[login] fetch error:', err);
+      errorDiv.textContent   = 'Cannot reach server. Is backend running on port 4000?';
+      errorDiv.style.display = '';
+    } finally {
+      submitBtn.disabled    = false;
+      submitBtn.textContent = 'Sign in';
+    }
+  });
+});
+</script>
+</body>
+</html>

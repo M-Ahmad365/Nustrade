@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listing — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .gallery-main {
+      aspect-ratio: 4/3;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .gallery-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .gallery-thumbs {
+      display: flex;
+      gap: var(--space-2);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    }
+    .gallery-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color var(--duration-fast) var(--ease-out);
+    }
+    .gallery-thumb.active { border-color: var(--primary); }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .listing-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+      padding-top: var(--space-6);
+      padding-bottom: var(--space-16);
+    }
+    @media (max-width: 767px) {
+      /* Clear space for mobile sticky bar */
+      .listing-layout { padding-bottom: calc(var(--space-16) + 72px); }
+    }
+    @media (min-width: 768px) {
+      .listing-layout { grid-template-columns: 1fr 360px; }
+    }
+    .listing-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .listing-action-card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline-soft);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+    }
+    .seller-card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline-soft);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<header class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a href="/index.html" class="navbar-logo">
+      <span class="navbar-logo-mark">N</span>
+      NusTrade
+    </a>
+    <div class="navbar-right" style="margin-left:auto;">
+      <a href="/index.html" class="btn btn-ghost btn-sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back
+      </a>
+      <div id="navAuthActions"></div>
+    </div>
+  </div>
+</header>
+
+<main class="page" id="mainContent">
+  <div class="container">
+
+    <!-- Skeleton while loading -->
+    <div id="loadingSkeleton" class="listing-layout">
+      <div>
+        <div class="skeleton" style="aspect-ratio:4/3; border-radius: var(--radius-lg); margin-bottom: var(--space-3);"></div>
+        <div style="display:flex; gap: var(--space-2); margin-bottom: var(--space-6);">
+          <div class="skeleton" style="width:72px; height:72px; border-radius: var(--radius-md);"></div>
+          <div class="skeleton" style="width:72px; height:72px; border-radius: var(--radius-md);"></div>
+          <div class="skeleton" style="width:72px; height:72px; border-radius: var(--radius-md);"></div>
+        </div>
+        <div class="skeleton skeleton-line skeleton-line-medium mb-3"></div>
+        <div class="skeleton skeleton-line skeleton-line-full mb-2"></div>
+        <div class="skeleton skeleton-line skeleton-line-full mb-2"></div>
+        <div class="skeleton skeleton-line skeleton-line-short"></div>
+      </div>
+      <div>
+        <div class="skeleton" style="height:200px; border-radius: var(--radius-lg); margin-bottom: var(--space-4);"></div>
+        <div class="skeleton" style="height:140px; border-radius: var(--radius-lg);"></div>
+      </div>
+    </div>
+
+    <!-- Actual content (hidden until loaded) -->
+    <div id="listingContent" class="listing-layout" style="display:none;">
+
+      <!-- Left: gallery + details -->
+      <div>
+        <div class="gallery-main" id="galleryMain">
+          <img id="mainImage" src="" alt="" loading="eager">
+        </div>
+        <div class="gallery-thumbs mt-3 mb-6" id="galleryThumbs"></div>
+
+        <div class="flex items-center gap-3 mb-3 flex-wrap">
+          <h1 id="listingTitle" style="font-size: var(--text-2xl); font-weight:600; letter-spacing:-0.3px;"></h1>
+          <span id="boostedBadge" class="badge-boosted" style="display:none;">
+            <span class="boosted-dot"></span> Featured
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3 mb-4 flex-wrap">
+          <span id="listingPrice" style="font-size: var(--text-3xl); font-weight:500; color: var(--primary); letter-spacing:-0.3px;"></span>
+          <span id="negotiableTag" class="tag-negotiable" style="display:none;">Negotiable</span>
+          <span id="conditionChip" class="chip chip-condition"></span>
+          <span id="categoryChip" class="chip chip-category"></span>
+        </div>
+
+        <div id="listingDescription" style="color: var(--ink); line-height:1.65; margin-bottom: var(--space-6);"></div>
+
+        <div style="display:flex; gap: var(--space-4); flex-wrap:wrap; color: var(--stone); font-size: var(--text-sm);">
+          <span id="listingLocation" style="display:flex; align-items:center; gap: var(--space-1);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span></span>
+          </span>
+          <span id="listingPosted" style="display:flex; align-items:center; gap: var(--space-1);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span></span>
+          </span>
+          <span id="listingViews" style="display:flex; align-items:center; gap: var(--space-1);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span></span> views
+          </span>
+        </div>
+
+        <!-- Owner controls (visible only to listing owner) -->
+        <div id="ownerActions" style="display:none; margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--hairline-soft);">
+          <h3 style="font-size: var(--text-base); font-weight:500; margin-bottom: var(--space-3); color: var(--steel);">Your listing</h3>
+          <div style="display:flex; gap: var(--space-3); flex-wrap:wrap;">
+            <a id="editListingBtn" href="#" class="btn btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Edit
+            </a>
+            <button id="boostListingBtn" class="btn btn-accent">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Boost
+            </button>
+            <button id="deleteListingBtn" class="btn btn-danger">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right sidebar -->
+      <div class="listing-sidebar">
+
+        <!-- Action card (buyer view) -->
+        <div class="listing-action-card" id="buyerActions">
+          <div style="font-size: var(--text-xl); font-weight:500; color: var(--primary); margin-bottom: var(--space-4);" id="sidebarPrice"></div>
+          <div style="display:flex; flex-direction:column; gap: var(--space-3);">
+            <button class="btn btn-primary btn-block" id="chatBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Chat with seller
+            </button>
+            <button class="btn btn-secondary btn-block" id="makeOfferBtn">Make an offer</button>
+            <button class="btn btn-ghost btn-block save-btn-detail" id="saveListingBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Save listing
+            </button>
+          </div>
+          <button id="reportListingBtn" style="margin-top: var(--space-4); background:none; border:none; color: var(--stone); font-size: var(--text-xs); cursor:pointer; width:100%;">Report this listing</button>
+        </div>
+
+        <!-- Seller card -->
+        <div class="seller-card">
+          <div style="font-size: var(--text-sm); font-weight:500; color: var(--steel); text-transform:uppercase; letter-spacing:0.5px;">Seller</div>
+          <div style="display:flex; align-items:center; gap: var(--space-3);">
+            <div class="avatar-placeholder avatar-lg" id="sellerAvatar"></div>
+            <div>
+              <div style="font-weight:500; font-size: var(--text-base);" id="sellerName"></div>
+              <div style="font-size: var(--text-sm); color: var(--steel);" id="sellerMeta"></div>
+            </div>
+          </div>
+          <div style="display:flex; gap: var(--space-4); font-size: var(--text-sm); color: var(--stone);">
+            <span id="sellerMemberSince" style="display:flex; align-items:center; gap: var(--space-1);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>Joined</span>
+            </span>
+            <span id="sellerSales" style="display:flex; align-items:center; gap: var(--space-1);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+              <span>0 sales</span>
+            </span>
+          </div>
+          <a id="viewSellerBtn" href="#" class="btn btn-ghost btn-sm">View profile</a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="errorState" style="display:none;">
+      <div class="empty-state">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p class="empty-state-title">Listing not found</p>
+        <p class="empty-state-desc">It may have been removed or is no longer available.</p>
+        <a href="/index.html" class="btn btn-primary mt-4">Browse listings</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Similar listings — injected by JS after main content loads -->
+  <div id="similarSection" style="display:none; border-top: 1px solid var(--hairline-soft); padding-top: var(--space-8); padding-bottom: var(--space-16);">
+    <div class="container">
+      <div class="section-header" style="margin-bottom: var(--space-6);">
+        <h2 class="section-title">Similar listings</h2>
+      </div>
+      <div id="similarGrid" class="listings-grid"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Make offer modal -->
+<div class="modal-backdrop" id="offerModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="offerModalTitle">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 class="modal-title" id="offerModalTitle">Make an offer</h2>
+      <button class="modal-close" id="closeOfferModal" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group mb-4">
+        <label class="form-label" for="offerAmount">Your offer (PKR)</label>
+        <input type="number" class="form-input" id="offerAmount" placeholder="Enter amount" min="1">
+        <span class="form-error" id="offerAmountError" style="display:none;"></span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="offerMessage">Message (optional)</label>
+        <textarea class="form-textarea" id="offerMessage" placeholder="Why this price? Or any questions…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancelOfferModal">Cancel</button>
+      <button class="btn btn-primary" id="submitOfferBtn">Send offer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="../js/utils.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/router.js"></script>
+<script src="../js/pages/listing-detail.js"></script>
+<div class="sunset-stripe"></div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page not found — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <style>
+    .not-found-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-8) var(--space-4);
+      text-align: center;
+      gap: var(--space-6);
+    }
+
+    .not-found-illustration {
+      width: 180px;
+      height: 180px;
+      position: relative;
+    }
+
+    .not-found-bg-circle {
+      width: 180px;
+      height: 180px;
+      border-radius: var(--radius-full);
+      background: var(--color-surface-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .not-found-number {
+      font-size: 72px;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: -4px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .not-found-icon {
+      position: absolute;
+      bottom: 8px;
+      right: 4px;
+      width: 48px;
+      height: 48px;
+      background: var(--color-surface);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-accent);
+      box-shadow: var(--shadow-raised);
+    }
+
+    .not-found-title {
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      color: var(--color-text);
+      letter-spacing: -0.5px;
+    }
+
+    .not-found-desc {
+      font-size: var(--text-base);
+      color: var(--color-text-muted);
+      max-width: 340px;
+      line-height: 1.6;
+    }
+
+    .not-found-actions {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .not-found-brand {
+      position: fixed;
+      top: var(--space-5);
+      left: var(--space-5);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-md);
+      font-weight: 600;
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    .not-found-brand-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-inverse);
+      font-weight: 700;
+      font-size: var(--text-base);
+    }
+  </style>
+</head>
+<body>
+
+<a href="/index.html" class="not-found-brand">
+  <span class="not-found-brand-mark">M</span>
+  NusTrade
+</a>
+
+<div class="not-found-page page">
+
+  <div class="not-found-illustration">
+    <div class="not-found-bg-circle">
+      <span class="not-found-number">404</span>
+    </div>
+    <div class="not-found-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <line x1="11" y1="8" x2="11" y2="14"/>
+        <line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+    </div>
+  </div>
+
+  <div>
+    <h1 class="not-found-title">Page not found</h1>
+    <p class="not-found-desc" style="margin-top: var(--space-3);">
+      The page you're looking for doesn't exist, was moved, or the link is broken.
+    </p>
+  </div>
+
+  <div class="not-found-actions">
+    <a href="/index.html" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Back home
+    </a>
+    <a href="/index.html?browse=1" class="btn btn-secondary">Browse listings</a>
+  </div>
+
+</div>
+
+</body>
+</html>

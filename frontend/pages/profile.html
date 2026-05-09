@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="mainDrawer" aria-label="Main menu">
+  <div class="drawer-header">
+    <span class="navbar-logo"><span class="navbar-logo-mark">N</span> NusTrade</span>
+    <button class="btn-icon drawer-close" aria-label="Close menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <nav class="drawer-nav">
+    <a href="/index.html">Home</a>
+    <a href="/pages/my-listings.html">My Listings</a>
+    <a href="/pages/my-offers.html">My Offers</a>
+    <a href="/pages/wishlist.html">Saved</a>
+    <a href="/pages/chat.html">Messages</a>
+    <a href="/pages/transactions.html">Transactions</a>
+    <a href="/pages/notifications.html">Notifications</a>
+    <a href="/pages/profile.html" class="active">Profile</a>
+  </nav>
+</aside>
+
+<header class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a href="/index.html" class="navbar-logo"><span class="navbar-logo-mark">N</span> NusTrade</a>
+    <nav class="navbar-links">
+      <a href="/index.html">Browse</a>
+      <a href="/pages/my-listings.html">My Listings</a>
+    </nav>
+    <div class="navbar-right" style="margin-left:auto;">
+      <a href="/pages/notifications.html" class="btn-icon" aria-label="Notifications" id="navBellBtn" style="position:relative;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </a>
+      <button class="btn-icon nav-menu-btn" aria-label="Open menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container" style="max-width:720px; padding-top: var(--space-8); padding-bottom: var(--space-16);">
+
+    <!-- Profile header -->
+    <div id="profileHeader" style="display:flex; gap: var(--space-6); align-items:flex-start; margin-bottom: var(--space-8);">
+      <div style="position:relative; flex-shrink:0;">
+        <div class="avatar-placeholder avatar-xl" id="profileAvatar" style="font-size: var(--text-xl);"></div>
+        <button id="changeAvatarBtn" style="position:absolute; bottom:0; right:0; width:28px; height:28px; border-radius:50%; background: var(--primary); color:white; border:2px solid white; cursor:pointer; display:flex; align-items:center; justify-content:center;" aria-label="Change profile picture">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+      </div>
+      <div style="flex:1; min-width:0;">
+        <h1 id="profileName" style="font-size: var(--text-2xl); font-weight:600; letter-spacing:-0.3px; margin-bottom: var(--space-1);"></h1>
+        <p id="profileEmail" style="color: var(--steel); font-size: var(--text-base); margin-bottom: var(--space-3);"></p>
+        <div style="display:flex; gap: var(--space-4); flex-wrap:wrap;">
+          <span id="profileListingCount" style="font-size: var(--text-sm); color: var(--steel);"></span>
+          <span id="profileRating" style="font-size: var(--text-sm); color: var(--steel);"></span>
+          <span id="profileJoined" style="font-size: var(--text-sm); color: var(--steel);"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="border-bottom: 1px solid var(--hairline-soft); margin-bottom: var(--space-6); display:flex; gap:0;">
+      <button class="tab-btn active" data-tab="edit" style="padding: var(--space-3) var(--space-4); border:none; background:none; cursor:pointer; font-size: var(--text-base); font-weight:500; color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom:-1px;">Edit Profile</button>
+      <button class="tab-btn" data-tab="security" style="padding: var(--space-3) var(--space-4); border:none; background:none; cursor:pointer; font-size: var(--text-base); font-weight:500; color: var(--steel); border-bottom: 2px solid transparent; margin-bottom:-1px;">Security</button>
+      <button class="tab-btn" data-tab="reviews" style="padding: var(--space-3) var(--space-4); border:none; background:none; cursor:pointer; font-size: var(--text-base); font-weight:500; color: var(--steel); border-bottom: 2px solid transparent; margin-bottom:-1px;">Reviews</button>
+    </div>
+
+    <!-- Edit Profile tab -->
+    <div id="tabEdit">
+      <form id="editProfileForm" class="auth-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="fullName">Full name</label>
+          <input type="text" class="form-input" id="fullName" name="fullName" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bio">Bio (optional)</label>
+          <textarea class="form-textarea" id="bio" name="bio" placeholder="Tell buyers a bit about yourself…" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="whatsapp">WhatsApp number (optional)</label>
+          <input type="tel" class="form-input" id="whatsapp" name="whatsapp" placeholder="+92 300 0000000">
+        </div>
+        <div id="editProfileError" class="form-error" style="display:none;"></div>
+        <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save changes</button>
+      </form>
+    </div>
+
+    <!-- Security tab -->
+    <div id="tabSecurity" style="display:none;">
+      <form id="changePasswordForm" class="auth-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="currentPassword">Current password</label>
+          <input type="password" class="form-input" id="currentPassword" name="currentPassword" autocomplete="current-password" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newPassword">New password</label>
+          <input type="password" class="form-input" id="newPassword" name="newPassword" autocomplete="new-password" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="confirmNewPassword">Confirm new password</label>
+          <input type="password" class="form-input" id="confirmNewPassword" autocomplete="new-password" required>
+        </div>
+        <div id="changePasswordError" class="form-error" style="display:none;"></div>
+        <button type="submit" class="btn btn-primary" id="changePasswordBtn">Change password</button>
+      </form>
+
+      <div style="margin-top: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--hairline-soft);">
+        <h3 style="font-size: var(--text-lg); font-weight:600; color: var(--color-danger); margin-bottom: var(--space-2);">Danger zone</h3>
+        <p style="font-size: var(--text-sm); color: var(--steel); margin-bottom: var(--space-4);">Deactivating your account will hide your listings and profile.</p>
+        <button class="btn btn-danger" id="deactivateBtn">Deactivate account</button>
+      </div>
+    </div>
+
+    <!-- Reviews tab -->
+    <div id="tabReviews" style="display:none;">
+      <div id="reviewsList"></div>
+    </div>
+
+  </div>
+</main>
+
+<div id="toast-container"></div>
+<script src="../js/utils.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/router.js"></script>
+<script src="../js/pages/profile.js"></script>
+<div class="sunset-stripe"></div>
+</body>
+</html>

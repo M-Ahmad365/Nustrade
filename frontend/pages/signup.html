@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+
+<div class="auth-page page">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/index.html" style="display:inline-flex; align-items:center; gap:10px; text-decoration:none;">
+        <span class="navbar-logo-mark">N</span>
+        <span style="font-family: var(--font-display); font-size:20px; font-weight:400; color:var(--ink);">NusTrade</span>
+      </a>
+    </div>
+
+    <h1 class="auth-title">Join NusTrade</h1>
+    <p class="auth-subtitle">NUST students only — use your NUST email address</p>
+
+    <form class="auth-form" id="signupForm" novalidate>
+
+      <div class="form-group">
+        <label class="form-label" for="fullName">Full name</label>
+        <input type="text" class="form-input" id="fullName" name="fullName" placeholder="Muhammad Ahmad" autocomplete="name" required>
+        <span class="form-error" id="fullNameError" role="alert" style="display:none"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">NUST email</label>
+        <input type="email" class="form-input" id="email" name="email" placeholder="you@nust.edu.pk" autocomplete="email" required>
+        <span class="form-error" id="emailError" role="alert" style="display:none"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" class="form-input" id="password" name="password" placeholder="At least 8 characters, 1 uppercase, 1 digit" autocomplete="new-password" required>
+        <span class="form-error" id="passwordError" role="alert" style="display:none"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirmPassword">Confirm password</label>
+        <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" placeholder="Repeat password" autocomplete="new-password" required>
+        <span class="form-error" id="confirmPasswordError" role="alert" style="display:none"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="department">Department</label>
+        <select class="form-input" id="department" name="department" required>
+          <option value="" disabled selected>Select your department</option>
+          <option value="SEECS">SEECS — School of Electrical Engineering &amp; Computer Science</option>
+          <option value="S3H">S3H — School of Social Sciences &amp; Humanities</option>
+          <option value="SCME">SCME — School of Chemical &amp; Materials Engineering</option>
+          <option value="SNS">SNS — School of Natural Sciences</option>
+          <option value="SMME">SMME — School of Mechanical &amp; Manufacturing Engineering</option>
+          <option value="SCEE">SCEE — School of Civil &amp; Environmental Engineering</option>
+          <option value="NBS">NBS — NUST Business School</option>
+          <option value="ASAB">ASAB — Atta-ur-Rahman School of Applied Biosciences</option>
+          <option value="IESE">IESE — Institute of Environmental Sciences &amp; Engineering</option>
+          <option value="NICE">NICE — NUST Institute of Civil Engineering</option>
+          <option value="NIT">NIT — NUST Institute of Technology</option>
+          <option value="MCS">MCS — Military College of Signals</option>
+          <option value="EME">EME — College of Electrical &amp; Mechanical Engineering</option>
+          <option value="OTHER">Other</option>
+        </select>
+        <span class="form-error" id="departmentError" role="alert" style="display:none"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="semester">Semester</label>
+        <select class="form-input" id="semester" name="semester" required>
+          <option value="" disabled selected>Select semester</option>
+          <option value="1">1st Semester</option>
+          <option value="2">2nd Semester</option>
+          <option value="3">3rd Semester</option>
+          <option value="4">4th Semester</option>
+          <option value="5">5th Semester</option>
+          <option value="6">6th Semester</option>
+          <option value="7">7th Semester</option>
+          <option value="8">8th Semester</option>
+        </select>
+        <span class="form-error" id="semesterError" role="alert" style="display:none"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Residence type</label>
+        <div style="display:flex; gap:16px; margin-top:4px;">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:var(--ink);">
+            <input type="radio" name="residenceType" id="residenceHostellite" value="hostellite">
+            Hostellite
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px; color:var(--ink);">
+            <input type="radio" name="residenceType" id="residenceDayScholar" value="day_scholar">
+            Day Scholar
+          </label>
+        </div>
+        <span class="form-error" id="residenceTypeError" role="alert" style="display:none"></span>
+      </div>
+
+      <div class="form-group" id="hostelGroup" style="display:none;">
+        <label class="form-label" for="hostelName">Hostel</label>
+        <select class="form-input" id="hostelName" name="hostelName">
+          <option value="" disabled selected>Select your hostel</option>
+          <optgroup label="Boys Hostels">
+            <option value="Ghazali">Ghazali</option>
+            <option value="Razi">Razi</option>
+            <option value="Rahmat">Rahmat</option>
+            <option value="Attar">Attar</option>
+            <option value="Liaquat">Liaquat</option>
+            <option value="Hajveri">Hajveri</option>
+            <option value="Zakria">Zakria</option>
+            <option value="Johar">Johar</option>
+            <option value="Berouni">Berouni</option>
+            <option value="Rumi">Rumi</option>
+          </optgroup>
+          <optgroup label="Girls Hostels">
+            <option value="Fatima">Fatima</option>
+            <option value="Amna">Amna</option>
+            <option value="Khadija">Khadija</option>
+          </optgroup>
+        </select>
+        <span class="form-error" id="hostelNameError" role="alert" style="display:none"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phone">Phone <span style="color: var(--stone); font-weight:400;">(optional)</span></label>
+        <input type="tel" class="form-input" id="phone" name="phone" placeholder="03xxxxxxxxx" autocomplete="tel">
+        <span class="form-error" id="phoneError" role="alert" style="display:none"></span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Create account</button>
+
+      <div id="formError" class="form-error" role="alert" style="display:none; text-align:center;"></div>
+
+    </form>
+
+    <p class="auth-footer">
+      Already have an account?
+      <a href="/pages/login.html" class="font-500">Sign in</a>
+    </p>
+
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<div class="sunset-stripe"></div>
+
+<script>
+var API = 'http://localhost:4000/api/v1';
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('[signup] ready');
+
+  var form       = document.getElementById('signupForm');
+  var submitBtn  = document.getElementById('submitBtn');
+  var errorDiv   = document.getElementById('formError');
+  var hostelGroup = document.getElementById('hostelGroup');
+
+  // Show/hide hostel field based on residence type
+  document.querySelectorAll('input[name="residenceType"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      hostelGroup.style.display = (this.value === 'hostellite') ? '' : 'none';
+    });
+  });
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    var fullName    = document.getElementById('fullName').value.trim();
+    var email       = document.getElementById('email').value.trim().toLowerCase();
+    var password    = document.getElementById('password').value;
+    var confirm     = document.getElementById('confirmPassword').value;
+    var department  = document.getElementById('department').value;
+    var semester    = parseInt(document.getElementById('semester').value, 10);
+    var residenceEl = document.querySelector('input[name="residenceType"]:checked');
+    var residence   = residenceEl ? residenceEl.value : '';
+    var hostelName  = document.getElementById('hostelName').value || undefined;
+    var phone       = document.getElementById('phone').value.trim() || undefined;
+
+    console.log('[signup] submitted', email, password.length);
+
+    // Clear all errors
+    document.querySelectorAll('.form-error').forEach(function(el) { el.textContent = ''; el.style.display = 'none'; });
+
+    // Validate
+    var ok = true;
+    function fieldErr(id, msg) { var el = document.getElementById(id); if (el) { el.textContent = msg; el.style.display = ''; } ok = false; }
+
+    if (!fullName || fullName.length < 3) fieldErr('fullNameError', 'Full name must be at least 3 characters.');
+    if (!email)                           fieldErr('emailError', 'Email is required.');
+    if (!password)                        fieldErr('passwordError', 'Password is required.');
+    else if (!/^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)) fieldErr('passwordError', 'Min 8 chars, 1 uppercase, 1 digit.');
+    if (!confirm)                         fieldErr('confirmPasswordError', 'Please confirm your password.');
+    else if (password !== confirm)        fieldErr('confirmPasswordError', 'Passwords do not match.');
+    if (!department)                      fieldErr('departmentError', 'Please select your department.');
+    if (!semester || semester < 1)        fieldErr('semesterError', 'Please select your semester.');
+    if (!residence)                       fieldErr('residenceTypeError', 'Please select your residence type.');
+    if (residence === 'hostellite' && !hostelName) fieldErr('hostelNameError', 'Please select your hostel.');
+
+    if (!ok) return;
+
+    submitBtn.disabled    = true;
+    submitBtn.textContent = 'Creating account...';
+
+    var body = {
+      email:          email,
+      password:       password,
+      full_name:      fullName,
+      department:     department,
+      semester:       semester,
+      residence_type: residence,
+    };
+    if (hostelName) body.hostel_name  = hostelName;
+    if (phone)      body.phone_number = phone;
+
+    try {
+      console.log('[signup] calling API...');
+      var res  = await fetch(API + '/auth/signup', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(body)
+      });
+      var json = await res.json();
+      console.log('[signup] API response:', json);
+
+      if (json.success) {
+        sessionStorage.setItem('verify_email', json.data.email || email);
+        if (json.data.dev_otp) sessionStorage.setItem('dev_otp', json.data.dev_otp);
+        window.location.href = 'verify-otp.html';
+      } else {
+        var msg = (json.error && json.error.message) || 'Signup failed. Please try again.';
+        errorDiv.textContent   = msg;
+        errorDiv.style.display = '';
+      }
+    } catch(err) {
+      console.error('[signup] fetch error:', err);
+      errorDiv.textContent   = 'Cannot reach server. Is backend running on port 4000?';
+      errorDiv.style.display = '';
+    } finally {
+      submitBtn.disabled    = false;
+      submitBtn.textContent = 'Create account';
+    }
+  });
+});
+</script>
+</body>
+</html>

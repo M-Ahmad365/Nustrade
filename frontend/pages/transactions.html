@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .tx-item {
+      background: var(--canvas);
+      border: 1px solid var(--hairline-soft);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      display: flex;
+      gap: var(--space-4);
+      align-items: center;
+      transition: box-shadow var(--duration-base) var(--ease-out);
+      cursor: pointer;
+    }
+    .tx-item:hover { box-shadow: var(--shadow-raised); }
+    .tx-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="mainDrawer" aria-label="Main menu">
+  <div class="drawer-header">
+    <span class="navbar-logo"><span class="navbar-logo-mark">N</span> NusTrade</span>
+    <button class="btn-icon drawer-close" aria-label="Close menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <nav class="drawer-nav">
+    <a href="/index.html">Home</a>
+    <a href="/pages/my-listings.html">My Listings</a>
+    <a href="/pages/my-offers.html">My Offers</a>
+    <a href="/pages/wishlist.html">Saved</a>
+    <a href="/pages/chat.html">Messages</a>
+    <a href="/pages/transactions.html" class="active">Transactions</a>
+    <a href="/pages/notifications.html">Notifications</a>
+    <a href="/pages/profile.html">Profile</a>
+  </nav>
+</aside>
+
+<header class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a href="/index.html" class="navbar-logo"><span class="navbar-logo-mark">N</span> NusTrade</a>
+    <nav class="navbar-links">
+      <a href="/index.html">Browse</a>
+      <a href="/pages/my-listings.html">My Listings</a>
+      <a href="/pages/my-offers.html">My Offers</a>
+      <a href="/pages/transactions.html" class="active">Transactions</a>
+    </nav>
+    <div class="navbar-right" style="margin-left:auto;">
+      <a href="/pages/notifications.html" class="btn-icon" aria-label="Notifications" id="navBellBtn" style="position:relative;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </a>
+      <a href="/pages/profile.html" class="nav-avatar-btn" id="navAvatarBtn" aria-label="Profile">
+        <div class="avatar-placeholder avatar-sm" id="navAvatarInitials">?</div>
+      </a>
+      <button class="btn-icon nav-menu-btn" aria-label="Open menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container main-content">
+
+    <h1 style="font-size: var(--text-2xl); font-weight:600; letter-spacing:-0.3px; margin-bottom: var(--space-6);">Transactions</h1>
+
+    <!-- Role tabs: Buying / Selling -->
+    <div style="display:flex; gap:0; border-bottom: 1px solid var(--hairline-soft); margin-bottom: var(--space-6);">
+      <button class="tab-btn active" data-role="buying" style="padding: var(--space-3) var(--space-4); border:none; background:none; cursor:pointer; font-size: var(--text-base); font-weight:500; color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom:-1px;">Buying</button>
+      <button class="tab-btn" data-role="selling" style="padding: var(--space-3) var(--space-4); border:none; background:none; cursor:pointer; font-size: var(--text-base); font-weight:500; color: var(--steel); border-bottom: 2px solid transparent; margin-bottom:-1px;">Selling</button>
+    </div>
+
+    <div id="txList" style="display:flex; flex-direction:column; gap: var(--space-3);"></div>
+    <div id="paginationBar" class="pagination"></div>
+
+  </div>
+</main>
+
+<!-- Transaction detail modal -->
+<div class="modal-backdrop" id="txModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="txModalTitle">
+  <div class="modal-dialog modal-dialog-lg">
+    <div class="modal-header">
+      <h2 class="modal-title" id="txModalTitle">Transaction Details</h2>
+      <button class="modal-close" id="closeTxModal" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="txModalBody"></div>
+    <div class="modal-footer" id="txModalFooter"></div>
+  </div>
+</div>
+
+<!-- Review modal -->
+<div class="modal-backdrop" id="reviewModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 class="modal-title" id="reviewModalTitle">Leave a Review</h2>
+      <button class="modal-close" id="closeReviewModal" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--steel); margin-bottom: var(--space-4);">How was your experience with <strong id="reviewTargetName"></strong>?</p>
+      <div class="form-group mb-4">
+        <label class="form-label">Rating</label>
+        <div id="reviewStars" style="display:flex; gap: var(--space-1);"></div>
+        <span class="form-error" id="reviewStarError" style="display:none;"></span>
+      </div>
+      <div class="form-group mb-2">
+        <label class="form-label" for="reviewComment">Comment <span style="color:var(--stone);">(optional)</span></label>
+        <textarea class="form-textarea" id="reviewComment" rows="3" placeholder="Describe your experience…" maxlength="500"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" id="reviewCancelBtn">Cancel</button>
+      <button type="button" class="btn btn-primary" id="reviewSubmitBtn">Submit review</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel transaction modal -->
+<div class="modal-backdrop" id="cancelModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="cancelModalTitle">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 class="modal-title" id="cancelModalTitle">Cancel Transaction</h2>
+      <button class="modal-close" id="closeCancelModal" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--steel); margin-bottom: var(--space-4);">Please let the other party know why you are cancelling.</p>
+      <div class="form-group mb-2">
+        <label class="form-label" for="cancelReason">Reason <span style="color:var(--color-danger);">*</span></label>
+        <textarea class="form-textarea" id="cancelReason" rows="3" placeholder="e.g. Item no longer available, buyer unresponsive…" maxlength="300" required></textarea>
+        <span class="form-error" id="cancelError" style="display:none;"></span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" id="cancelBackBtn">Back</button>
+      <button type="button" class="btn btn-primary" id="cancelSubmitBtn" style="background: var(--color-danger); border-color: var(--color-danger);">Confirm cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="../js/utils.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/router.js"></script>
+<script src="../js/pages/transactions.js"></script>
+<div class="sunset-stripe"></div>
+</body>
+</html>

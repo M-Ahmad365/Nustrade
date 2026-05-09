@@ -1,0 +1,370 @@
+/* animations.css — Motion system for NusTrade (Mistral-inspired) */
+
+/* ══════════════════════════════════════════════════════════════════
+   KEYFRAMES
+   ══════════════════════════════════════════════════════════════════ */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(calc(100% + 24px)); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes heartBounce {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.35); }
+  65%  { transform: scale(0.9); }
+  82%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.3); }
+}
+
+@keyframes badgePop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  70%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes floatBg {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(2%, 1.5%) rotate(1deg); }
+}
+
+@keyframes floatIcon {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes navUnderline {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   PAGE ENTRANCES
+   ══════════════════════════════════════════════════════════════════ */
+
+.page {
+  animation: fadeInUp 240ms ease both;
+  position: relative;
+  z-index: 1;
+}
+
+/* Staggered children */
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeInUp 260ms ease both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 40ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 120ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 160ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 280ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 320ms; }
+
+/* Utility entrance classes */
+.animate-fade-in   { animation: fadeIn    250ms ease both; }
+.animate-fade-up   { animation: fadeInUp  280ms ease both; }
+.animate-fade-down { animation: fadeInDown 240ms ease both; }
+.animate-pop-in    { animation: popIn     280ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+/* Scroll-triggered reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 380ms ease, transform 380ms ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   LISTING CARDS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Cards entering grid from infinite scroll */
+.card-enter {
+  animation: cardIn 280ms ease both;
+}
+
+/* Image zoom — GPU only */
+.card-img-wrap img,
+.card-image { will-change: transform; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   AUTH PAGE BACKGROUND
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Auth card entrance */
+.auth-card {
+  animation: popIn 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Form fields stagger in */
+.auth-form .form-group {
+  opacity: 0;
+  animation: fadeInUp 240ms ease both;
+}
+.auth-form .form-group:nth-child(1) { animation-delay: 100ms; }
+.auth-form .form-group:nth-child(2) { animation-delay: 140ms; }
+.auth-form .form-group:nth-child(3) { animation-delay: 180ms; }
+.auth-form .form-group:nth-child(4) { animation-delay: 220ms; }
+.auth-form .form-group:nth-child(5) { animation-delay: 260ms; }
+.auth-form .form-group:nth-child(6) { animation-delay: 300ms; }
+.auth-form .form-group:nth-child(7) { animation-delay: 340ms; }
+
+.auth-form .btn-block,
+.auth-form .btn-full {
+  opacity: 0;
+  animation: fadeInUp 240ms ease 380ms both;
+}
+
+.auth-logo  { animation: fadeInDown 280ms ease 30ms both; opacity: 0; }
+.auth-title { animation: fadeInUp 260ms ease 60ms both; opacity: 0; }
+.auth-subtitle { animation: fadeInUp 260ms ease 90ms both; opacity: 0; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   NAVBAR
+   ══════════════════════════════════════════════════════════════════ */
+
+.navbar { animation: fadeInDown 280ms ease both; }
+
+/* Active nav link underline draws in */
+.navbar-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 12px; right: 12px;
+  height: 2px;
+  background: var(--primary);
+  border-radius: var(--radius-full);
+  animation: navUnderline 200ms ease;
+  transform-origin: left;
+}
+.navbar-links a { position: relative; }
+
+/* Badge pop */
+.nav-badge { animation: badgePop 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.unread-badge { animation: badgePop 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   BUTTONS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Ripple on click */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 50% 50% 50% 50%;
+  background: rgba(255,255,255,0.22);
+  border-radius: 50%;
+  opacity: 0;
+}
+.btn:active::after {
+  inset: 0; border-radius: inherit; opacity: 1;
+  animation: fadeIn 300ms ease;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   MODALS
+   ══════════════════════════════════════════════════════════════════ */
+
+.modal-backdrop { animation: fadeIn 160ms ease both; }
+.modal-dialog   { animation: popIn 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+.modal-dialog.closing {
+  animation: none;
+  transform: scale(0.96) translateY(8px);
+  opacity: 0;
+  transition: transform 180ms ease-in, opacity 180ms ease-in;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   TOASTS
+   ══════════════════════════════════════════════════════════════════ */
+
+.toast {
+  animation: slideUp 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.toast.dismissing {
+  animation: none;
+  transform: translateX(calc(100% + 24px));
+  opacity: 0;
+  transition: transform 200ms ease-in, opacity 200ms ease-in;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   SAVE / HEART
+   ══════════════════════════════════════════════════════════════════ */
+
+.save-btn.saved,
+.save-btn.bouncing { animation: heartBounce 400ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   BOOSTED DOT
+   ══════════════════════════════════════════════════════════════════ */
+
+.boosted-dot { animation: pulseDot 1.8s ease-in-out infinite; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE DRAWER
+   ══════════════════════════════════════════════════════════════════ */
+
+.drawer { transition: transform 300ms var(--ease-out); }
+.drawer.open { box-shadow: -8px 0 32px rgba(0,0,0,0.1); }
+.drawer-backdrop { transition: opacity 260ms ease, visibility 260ms; }
+
+.drawer-nav a {
+  transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+.drawer-nav a:hover { transform: translateX(4px); }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   FILTER SHEET
+   ══════════════════════════════════════════════════════════════════ */
+
+.filter-sheet { transition: transform 320ms var(--ease-out); }
+.filter-sheet.open { box-shadow: 0 -8px 32px rgba(0,0,0,0.08); }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   CHAT BUBBLES
+   ══════════════════════════════════════════════════════════════════ */
+
+.bubble-wrap      { animation: fadeInUp 200ms ease both; }
+.bubble-wrap.sent { animation: slideInRight 200ms ease both; }
+
+.chat-thread-item {
+  transition: background 150ms ease, transform 150ms ease;
+}
+.chat-thread-item:hover { transform: translateX(2px); }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   CATEGORY CHIPS
+   ══════════════════════════════════════════════════════════════════ */
+
+.category-chip {
+  transition: all 160ms ease;
+}
+.category-chip:hover { transform: translateY(-2px); box-shadow: 0 3px 8px rgba(0,0,0,0.08); }
+.category-chip.active { transform: translateY(-2px); }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   FORM INPUTS — focus micro-animation
+   ══════════════════════════════════════════════════════════════════ */
+
+.form-group:focus-within .form-label {
+  color: var(--primary);
+  transition: color 180ms ease;
+}
+
+.upload-area { transition: border-color 200ms ease, background 200ms ease, transform 200ms ease; }
+.upload-area:hover,
+.upload-area.drag-over { transform: scale(1.008); }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   EMPTY STATE ICON
+   ══════════════════════════════════════════════════════════════════ */
+
+.empty-state-icon { animation: floatIcon 3.5s ease-in-out infinite; }
+.empty-state      { animation: fadeInUp 360ms ease both; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   SKELETON SHIMMER
+   ══════════════════════════════════════════════════════════════════ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--hairline-soft) 0%,
+    #f5f2ea 45%, #faf8f2 50%,
+    #f5f2ea 55%, var(--hairline-soft) 100%
+  );
+  background-size: 300% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   FOCUS RING
+   ══════════════════════════════════════════════════════════════════ */
+
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(250, 82, 15, 0.22);
+  border-radius: var(--radius-sm);
+  transition: box-shadow 150ms ease;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   REDUCED MOTION — WCAG 2.1 AA
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+  }
+}

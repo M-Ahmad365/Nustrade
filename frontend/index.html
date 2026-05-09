@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NusTrade — Student Marketplace</title>
+  <meta name="description" content="Buy and sell within NUST Islamabad. Verified students only.">
+
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+</head>
+<body>
+
+<!-- ── Mobile drawer backdrop ──────────────────────────────────── -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+<!-- ── Mobile drawer ───────────────────────────────────────────── -->
+<aside class="drawer" id="mainDrawer" aria-label="Main menu">
+  <div class="drawer-header">
+    <span class="navbar-logo">
+      <span class="navbar-logo-mark">N</span>
+      NusTrade
+    </span>
+    <button class="btn-icon drawer-close" aria-label="Close menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <nav class="drawer-nav" aria-label="Site navigation">
+    <a href="/index.html">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </a>
+    <a href="/pages/wishlist.html">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Saved
+    </a>
+    <a href="/pages/chat.html">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Messages
+    </a>
+    <a href="/pages/transactions.html">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      Transactions
+    </a>
+    <a href="/pages/my-listings.html">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      My Listings
+    </a>
+    <a href="/pages/profile.html">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+  </nav>
+  <div style="padding: var(--space-4); margin-top: auto; border-top: 1px solid var(--border-subtle);">
+    <a href="/pages/create-listing.html" class="btn btn-accent btn-block">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Post Listing
+    </a>
+  </div>
+</aside>
+
+<!-- ── Top Navigation ───────────────────────────────────────────── -->
+<header class="navbar" id="navbar" role="banner">
+  <div class="container navbar-inner">
+
+    <!-- Logo -->
+    <a href="/index.html" class="navbar-logo" style="font-family: var(--font-display); font-size: 20px; font-weight: 400; color: var(--ink); text-decoration: none;">
+      <span class="navbar-logo-mark" aria-hidden="true">N</span>
+      NusTrade
+    </a>
+
+    <!-- Desktop nav links -->
+    <nav class="navbar-links" aria-label="Main navigation">
+      <a href="/index.html">Browse</a>
+      <a href="/pages/my-listings.html">My Listings</a>
+      <a href="/pages/transactions.html">Transactions</a>
+    </nav>
+
+    <!-- Search -->
+    <div class="navbar-search">
+      <svg class="navbar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input
+        type="search"
+        class="navbar-search-input"
+        placeholder="Search listings…"
+        aria-label="Search listings"
+        id="navSearch"
+        autocomplete="off"
+      >
+    </div>
+
+    <!-- Right actions -->
+    <div class="navbar-right">
+
+      <!-- Wishlist -->
+      <a href="/pages/wishlist.html" class="nav-icon-btn" aria-label="Saved listings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </a>
+
+      <!-- Chat -->
+      <a href="/pages/chat.html" class="nav-icon-btn" aria-label="Messages" id="navChatBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="nav-badge" id="chatBadge" style="display:none" aria-label="unread messages"></span>
+      </a>
+
+      <!-- Notifications -->
+      <button class="nav-icon-btn" aria-label="Notifications" id="navNotifBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="nav-badge" id="notifBadge" style="display:none" aria-label="unread notifications"></span>
+      </button>
+
+      <!-- Post CTA (desktop) -->
+      <a href="/pages/create-listing.html" class="btn btn-primary btn-sm" id="postBtn" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Post
+      </a>
+
+      <!-- Auth actions (when logged out) -->
+      <div id="navAuthActions">
+        <a href="/pages/login.html" class="btn btn-ghost btn-sm">Login</a>
+      </div>
+
+      <!-- Avatar (when logged in) -->
+      <button class="nav-avatar-btn" id="navAvatarBtn" style="display:none" aria-label="Your profile" aria-haspopup="true">
+        <div class="avatar-placeholder avatar-sm" id="navAvatarInitials" aria-hidden="true">?</div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+
+      <!-- Mobile menu toggle -->
+      <button class="btn-icon nav-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mainDrawer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ── Main content ─────────────────────────────────────────────── -->
+<main class="page" id="mainContent">
+
+  <!-- Category chips bar -->
+  <div style="border-bottom: 1px solid var(--border-subtle);">
+    <div class="container">
+      <div class="category-strip" id="categoryBar">
+        <button class="category-chip active" data-category="">All</button>
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-layout">
+
+      <!-- ── Filters sidebar (desktop) ───────────────────────── -->
+      <aside class="filters-sidebar" aria-label="Filters">
+        <div class="filters-panel">
+
+          <div class="filters-section">
+            <button class="filters-section-header" aria-expanded="true" aria-controls="filterPrice">
+              Price
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="filters-section-body" id="filterPrice">
+              <div style="display:flex; gap: var(--space-2);">
+                <input type="number" class="form-input" placeholder="Min" id="filterMinPrice" aria-label="Minimum price" style="flex:1;">
+                <input type="number" class="form-input" placeholder="Max" id="filterMaxPrice" aria-label="Maximum price" style="flex:1;">
+              </div>
+            </div>
+          </div>
+
+          <div class="filters-section">
+            <button class="filters-section-header" aria-expanded="true" aria-controls="filterCondition">
+              Condition
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="filters-section-body" id="filterCondition">
+              <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-sm); color: var(--color-text);">
+                <input type="checkbox" value="new" style="accent-color: var(--primary);"> New
+              </label>
+              <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-sm); color: var(--color-text);">
+                <input type="checkbox" value="like_new"> Like New
+              </label>
+              <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-sm); color: var(--color-text);">
+                <input type="checkbox" value="good"> Good
+              </label>
+              <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-sm); color: var(--color-text);">
+                <input type="checkbox" value="fair"> Fair
+              </label>
+            </div>
+          </div>
+
+          <div class="filters-section">
+            <button class="filters-section-header" aria-expanded="true" aria-controls="filterSort">
+              Sort By
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="filters-section-body" id="filterSort">
+              <select class="form-select" id="filterSortSelect" aria-label="Sort listings by">
+                <option value="recommended">Recommended</option>
+                <option value="newest" selected>Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="most_viewed">Most Viewed</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="filters-section">
+            <button class="filters-section-header" aria-expanded="false" aria-controls="filterHostel">
+              Seller Hostel
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="filters-section-body" id="filterHostel" style="display:none;">
+              <select class="form-select" id="filterHostelSelect" aria-label="Filter by hostel">
+                <option value="">Any hostel</option>
+                <optgroup label="Boys Hostels">
+                  <option value="H1">H1</option><option value="H2">H2</option><option value="H3">H3</option>
+                  <option value="H4">H4</option><option value="H5">H5</option><option value="H6">H6</option>
+                  <option value="H7">H7</option><option value="H8">H8</option><option value="H9">H9</option>
+                  <option value="H10">H10</option><option value="H11">H11</option><option value="H12">H12</option>
+                  <option value="H13">H13</option>
+                </optgroup>
+                <optgroup label="Girls Hostels">
+                  <option value="G1">G1</option><option value="G2">G2</option><option value="G3">G3</option>
+                  <option value="G4">G4</option><option value="G5">G5</option><option value="G6">G6</option>
+                  <option value="G7">G7</option><option value="G8">G8</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <div class="filters-section">
+            <button class="filters-section-header" aria-expanded="false" aria-controls="filterDept">
+              Department
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="filters-section-body" id="filterDept" style="display:none;">
+              <select class="form-select" id="filterDeptSelect" aria-label="Filter by department">
+                <option value="">Any department</option>
+                <option value="SEECS">SEECS</option><option value="SCME">SCME</option>
+                <option value="SNS">SNS</option><option value="SMME">SMME</option>
+                <option value="SCEE">SCEE</option><option value="NBS">NBS</option>
+                <option value="SADA">SADA</option><option value="ASAB">ASAB</option>
+                <option value="IESE">IESE</option><option value="IGIS">IGIS</option>
+                <option value="RIMMS">RIMMS</option><option value="CIPS">CIPS</option>
+                <option value="MCE">MCE</option><option value="NISTE">NISTE</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="padding: var(--space-4);">
+            <button class="btn btn-primary btn-block" id="applyFiltersBtn">Apply Filters</button>
+            <button class="btn btn-ghost btn-block mt-2" id="clearFiltersBtn">Clear All</button>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- ── Main listings area ───────────────────────────────── -->
+      <section class="page-main" aria-label="Listings">
+
+        <!-- Trending section -->
+        <div id="trendingSection" class="mb-8">
+          <div class="section-header">
+            <h2 class="section-title">Trending Now</h2>
+            <span style="font-size: var(--text-xs); color: var(--color-text-subtle);">Updated every 24h</span>
+          </div>
+          <div class="listings-grid" id="trendingGrid">
+            <!-- Skeletons shown while loading -->
+          </div>
+        </div>
+
+        <!-- All listings section -->
+        <div>
+          <div class="section-header">
+            <h2 class="section-title" id="listingsTitle">All Listings</h2>
+            <!-- Mobile filter trigger -->
+            <button class="btn btn-secondary btn-sm" id="mobileFilterBtn" aria-label="Open filters">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+              Filter
+            </button>
+          </div>
+
+          <div class="listings-grid" id="listingsGrid">
+            <!-- Populated by index.js -->
+          </div>
+
+          <!-- Infinite scroll sentinel — JS watches this with IntersectionObserver -->
+          <div id="infiniteAnchor" style="height:1px;"></div>
+          <div id="infiniteSpinner" style="display:none; text-align:center; padding: var(--space-6);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 0.8s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          </div>
+          <p id="infiniteEnd" style="display:none; text-align:center; color: var(--stone); font-size: var(--text-sm); padding: var(--space-4);">You've seen all listings</p>
+        </div>
+
+      </section>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── Mobile filter sheet ──────────────────────────────────────── -->
+<div class="drawer-backdrop" id="filterBackdrop"></div>
+<div class="filter-sheet" id="filterSheet" role="dialog" aria-label="Filters" aria-modal="true">
+  <div class="filter-sheet-handle" aria-hidden="true"></div>
+  <div style="padding: 0 var(--space-4) var(--space-4);">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: var(--space-4);">
+      <h3 style="font-size: var(--text-lg); font-weight: 600;">Filters</h3>
+      <button class="btn-icon" id="closeFilterSheet" aria-label="Close filters">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <!-- Mirror of desktop filters — same IDs prefixed with 'm-' -->
+    <div class="form-group mb-4">
+      <label class="form-label" for="mFilterMinPrice">Price Range</label>
+      <div style="display:flex; gap: var(--space-2);">
+        <input type="number" class="form-input" placeholder="Min" id="mFilterMinPrice" aria-label="Min price">
+        <input type="number" class="form-input" placeholder="Max" id="mFilterMaxPrice" aria-label="Max price">
+      </div>
+    </div>
+    <div class="form-group mb-4">
+      <label class="form-label">Condition</label>
+      <div style="display:flex; flex-direction:column; gap: var(--space-2);">
+        <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-base);"><input type="checkbox" value="new" style="accent-color: var(--primary);"> New</label>
+        <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-base);"><input type="checkbox" value="like_new"> Like New</label>
+        <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-base);"><input type="checkbox" value="good"> Good</label>
+        <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-base);"><input type="checkbox" value="fair"> Fair</label>
+      </div>
+    </div>
+    <div class="form-group mb-4">
+      <label class="form-label" for="mFilterSort">Sort By</label>
+      <select class="form-select" id="mFilterSort">
+        <option value="recommended">Recommended</option>
+        <option value="newest" selected>Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+        <option value="most_viewed">Most Viewed</option>
+      </select>
+    </div>
+    <div class="form-group mb-4">
+      <label class="form-label" for="mFilterHostel">Seller Hostel</label>
+      <select class="form-select" id="mFilterHostel">
+        <option value="">Any hostel</option>
+        <optgroup label="Boys Hostels">
+          <option value="H1">H1</option><option value="H2">H2</option><option value="H3">H3</option>
+          <option value="H4">H4</option><option value="H5">H5</option><option value="H6">H6</option>
+          <option value="H7">H7</option><option value="H8">H8</option><option value="H9">H9</option>
+          <option value="H10">H10</option><option value="H11">H11</option><option value="H12">H12</option>
+          <option value="H13">H13</option>
+        </optgroup>
+        <optgroup label="Girls Hostels">
+          <option value="G1">G1</option><option value="G2">G2</option><option value="G3">G3</option>
+          <option value="G4">G4</option><option value="G5">G5</option><option value="G6">G6</option>
+          <option value="G7">G7</option><option value="G8">G8</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="form-group mb-6">
+      <label class="form-label" for="mFilterDept">Department</label>
+      <select class="form-select" id="mFilterDept">
+        <option value="">Any department</option>
+        <option value="SEECS">SEECS</option><option value="SCME">SCME</option>
+        <option value="SNS">SNS</option><option value="SMME">SMME</option>
+        <option value="SCEE">SCEE</option><option value="NBS">NBS</option>
+        <option value="SADA">SADA</option><option value="ASAB">ASAB</option>
+        <option value="IESE">IESE</option><option value="IGIS">IGIS</option>
+        <option value="RIMMS">RIMMS</option><option value="CIPS">CIPS</option>
+        <option value="MCE">MCE</option><option value="NISTE">NISTE</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-block" id="mApplyFiltersBtn">Apply Filters</button>
+    <button class="btn btn-ghost btn-block mt-2" id="mClearFiltersBtn">Clear All</button>
+  </div>
+</div>
+
+<!-- ── Toast container ──────────────────────────────────────────── -->
+<div id="toast-container" role="region" aria-label="Notifications" aria-live="polite"></div>
+
+<!-- ── Sunset stripe — brand signature ──────────────────────────── -->
+<div class="sunset-stripe"></div>
+
+<!-- ── Scripts ─────────────────────────────────────────────────── -->
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/router.js"></script>
+<script src="js/index.js"></script>
+
+</body>
+</html>

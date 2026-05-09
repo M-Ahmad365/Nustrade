@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Listing — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .create-layout {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-4) var(--space-16);
+    }
+
+    /* Step indicator */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--space-8);
+    }
+    .step-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--hairline-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--stone);
+      transition: background var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+    }
+    .step-dot.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    .step-dot.done {
+      background: var(--color-success, #16a34a);
+      border-color: var(--color-success, #16a34a);
+      color: white;
+    }
+    .step-label {
+      font-size: var(--text-xs);
+      color: var(--stone);
+      white-space: nowrap;
+    }
+    .step-label.active { color: var(--primary); font-weight: 500; }
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: var(--hairline-soft);
+      margin: 0 var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+    .step-line.done { background: var(--color-success, #16a34a); }
+
+    /* Image preview grid */
+    .image-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3);
+      margin-top: var(--space-3);
+    }
+    .image-preview-item {
+      aspect-ratio: 1;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      background: var(--surface);
+    }
+    .image-preview-item img { width:100%; height:100%; object-fit:cover; }
+    .image-remove-btn {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 22px; height: 22px;
+      border-radius: var(--radius-full);
+      background: rgba(0,0,0,0.55);
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    /* Tags input */
+    .tags-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      padding: var(--space-2);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-md);
+      min-height: 44px;
+      background: var(--canvas);
+      cursor: text;
+    }
+    .tags-wrap:focus-within { border-color: var(--primary); }
+    .tag-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--color-primary-light, rgba(20,184,166,0.12));
+      color: var(--primary);
+      border-radius: var(--radius-full);
+      padding: 2px 10px;
+      font-size: var(--text-sm);
+      font-weight: 500;
+    }
+    .tag-pill button {
+      background: none; border: none; cursor: pointer;
+      color: var(--primary); padding: 0; line-height: 1;
+      font-size: 14px;
+    }
+    .tag-pill-input {
+      border: none; outline: none;
+      background: transparent;
+      font-size: var(--text-sm);
+      color: var(--ink);
+      min-width: 80px;
+      flex: 1;
+    }
+
+    /* 2-col form grids → single column on very narrow screens */
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    @media (max-width: 480px) {
+      .form-row-2 { grid-template-columns: 1fr; }
+    }
+
+    /* Review section */
+    .review-row {
+      display: flex;
+      gap: var(--space-2);
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--hairline-soft);
+      font-size: var(--text-sm);
+    }
+    .review-label { color: var(--steel); width: 120px; flex-shrink: 0; }
+    .review-value { color: var(--ink); flex: 1; }
+  </style>
+</head>
+<body>
+
+<header class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a href="/index.html" class="navbar-logo">
+      <span class="navbar-logo-mark">N</span>
+      NusTrade
+    </a>
+    <div style="margin-left: auto;">
+      <a href="/index.html" class="btn btn-ghost btn-sm">Cancel</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="create-layout">
+
+    <div style="margin-bottom: var(--space-6);">
+      <h1 style="font-size: var(--text-2xl); font-weight:600; letter-spacing:-0.3px; margin-bottom: var(--space-1);">Post a listing</h1>
+      <p style="color: var(--steel);">More info = faster sale.</p>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="step-indicator" id="stepIndicator">
+      <div class="step-node">
+        <div class="step-dot active" id="dot1">1</div>
+        <div class="step-label active" id="lbl1">Photos</div>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step-node">
+        <div class="step-dot" id="dot2">2</div>
+        <div class="step-label" id="lbl2">Details</div>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step-node">
+        <div class="step-dot" id="dot3">3</div>
+        <div class="step-label" id="lbl3">Review</div>
+      </div>
+    </div>
+
+    <form id="createListingForm" novalidate>
+
+      <!-- ══ STEP 1: Photos ══ -->
+      <div id="step1">
+        <div class="form-group mb-3">
+          <label class="form-label">Photos <span style="color:var(--stone);">(1–8, max 5 MB each)</span></label>
+          <div class="upload-area" id="uploadArea" tabindex="0" role="button" aria-label="Upload photos">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--stone)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p style="font-size: var(--text-base); font-weight:500; color: var(--steel);">Click or drag photos here</p>
+            <p style="font-size: var(--text-sm); color: var(--stone);">JPG, PNG, WebP</p>
+            <input type="file" id="imageInput" name="images" accept="image/jpeg,image/png,image/webp" multiple style="display:none;">
+          </div>
+          <div class="image-preview-grid" id="imagePreviewGrid"></div>
+          <span class="form-error" id="imagesError" style="display:none;"></span>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; margin-top: var(--space-6);">
+          <button type="button" class="btn btn-primary" id="step1Next" style="min-width:120px;">
+            Next
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ══ STEP 2: Details ══ -->
+      <div id="step2" style="display:none;">
+
+        <div class="form-group mb-4">
+          <label class="form-label" for="title">Title <span style="color:var(--color-danger);">*</span></label>
+          <input type="text" class="form-input" id="title" name="title" placeholder="e.g. HP Laptop 15s — barely used" maxlength="120" required>
+          <span class="form-error" id="titleError" style="display:none;"></span>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label" for="description">Description <span style="color:var(--color-danger);">*</span></label>
+          <textarea class="form-textarea" id="description" name="description" placeholder="Describe the item — specs, reason for selling, any defects…" rows="5" required></textarea>
+          <span class="form-error" id="descriptionError" style="display:none;"></span>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="price">Price (PKR) <span style="color:var(--color-danger);">*</span></label>
+            <input type="number" class="form-input" id="price" name="price" placeholder="5000" min="0" required>
+            <span class="form-error" id="priceError" style="display:none;"></span>
+          </div>
+          <div class="form-group" style="justify-content:flex-end; padding-top: var(--space-6);">
+            <label style="display:flex; align-items:center; gap: var(--space-2); cursor:pointer; font-size: var(--text-base); color: var(--ink);">
+              <input type="checkbox" id="isNegotiable" name="isNegotiable" style="accent-color: var(--primary); width:16px; height:16px;">
+              Negotiable
+            </label>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label" for="category">Category <span style="color:var(--color-danger);">*</span></label>
+            <select class="form-select" id="category" name="categoryId" required>
+              <option value="">Select category</option>
+            </select>
+            <span class="form-error" id="categoryError" style="display:none;"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="condition">Condition <span style="color:var(--color-danger);">*</span></label>
+            <select class="form-select" id="condition" name="condition" required>
+              <option value="">Select condition</option>
+              <option value="new">New</option>
+              <option value="like_new">Like New</option>
+              <option value="good">Good</option>
+              <option value="fair">Fair</option>
+            </select>
+            <span class="form-error" id="conditionError" style="display:none;"></span>
+          </div>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label" for="location">Location <span style="color:var(--color-danger);">*</span></label>
+          <select class="form-select" id="location" name="location" required>
+            <option value="">Select location</option>
+            <optgroup label="Boys Hostels">
+              <option value="Ghazali">Ghazali</option>
+              <option value="Razi">Razi</option>
+              <option value="Rahmat">Rahmat</option>
+              <option value="Attar">Attar</option>
+              <option value="Liaquat">Liaquat</option>
+              <option value="Hajveri">Hajveri</option>
+              <option value="Zakria">Zakria</option>
+              <option value="Johar">Johar</option>
+              <option value="Berouni">Berouni</option>
+              <option value="Rumi">Rumi</option>
+            </optgroup>
+            <optgroup label="Girls Hostels">
+              <option value="Fatima">Fatima</option>
+              <option value="Amna">Amna</option>
+              <option value="Khadija">Khadija</option>
+            </optgroup>
+            <option value="off_campus">Off Campus</option>
+          </select>
+          <span class="form-error" id="locationError" style="display:none;"></span>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label" for="courseCode">Course code <span style="color:var(--stone);">(optional — for books/notes)</span></label>
+          <input type="text" class="form-input" id="courseCode" name="course_code" placeholder="e.g. CS-236, EE-201" maxlength="20">
+        </div>
+
+        <div class="form-group mb-6">
+          <label class="form-label">Tags <span style="color:var(--stone);">(optional — up to 10, press Enter to add)</span></label>
+          <div class="tags-wrap" id="tagsWrap">
+            <input type="text" class="tag-pill-input" id="tagInput" placeholder="Add a tag…" maxlength="30" autocomplete="off">
+          </div>
+          <input type="hidden" id="tagsHidden" name="tags">
+          <span class="form-error" id="tagsError" style="display:none;"></span>
+        </div>
+
+        <div style="display:flex; gap: var(--space-3); justify-content:space-between; margin-top: var(--space-6);">
+          <button type="button" class="btn btn-ghost" id="step2Back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back
+          </button>
+          <button type="button" class="btn btn-primary" id="step2Next" style="min-width:120px;">
+            Review
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- ══ STEP 3: Review ══ -->
+      <div id="step3" style="display:none;">
+        <p style="color: var(--steel); margin-bottom: var(--space-5);">Check everything before posting.</p>
+
+        <!-- Preview images -->
+        <div id="reviewImages" style="display:flex; gap: var(--space-2); flex-wrap:wrap; margin-bottom: var(--space-5);"></div>
+
+        <!-- Review rows -->
+        <div id="reviewRows"></div>
+
+        <div id="formError" class="form-error mb-4" role="alert" style="display:none;"></div>
+
+        <div style="display:flex; gap: var(--space-3); justify-content:space-between; margin-top: var(--space-6);">
+          <button type="button" class="btn btn-ghost" id="step3Back">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Edit
+          </button>
+          <button type="submit" class="btn btn-primary" id="submitBtn" style="min-width:140px; height:48px; font-size: var(--text-md);">
+            Post listing
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</main>
+
+<div id="toast-container"></div>
+<script src="../js/utils.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/router.js"></script>
+<script src="../js/pages/create-listing.js"></script>
+<div class="sunset-stripe"></div>
+</body>
+</html>
