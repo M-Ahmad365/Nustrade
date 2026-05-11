@@ -4,8 +4,11 @@
  * Central env config. Fail fast if required variables are missing so
  * the operator sees the problem at startup, not buried in a request log.
  */
+// When Railway injects DATABASE_URL, individual PG_* vars are not needed.
+const pgVarsRequired = !process.env.DATABASE_URL;
+
 const required = [
-  'PG_HOST', 'PG_PORT', 'PG_DB', 'PG_USER',
+  ...(pgVarsRequired ? ['PG_HOST', 'PG_PORT', 'PG_DB', 'PG_USER'] : []),
   'MONGO_URI',
   'REDIS_URL',
   'JWT_SECRET',

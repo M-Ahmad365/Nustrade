@@ -155,6 +155,17 @@ function renderListing(listing) {
     salesEl.querySelector('span').textContent = `${count} sale${count !== 1 ? 's' : ''}`;
   }
 
+  // Seller rating
+  const ratingEl = document.getElementById('sellerRating');
+  if (ratingEl) {
+    const r = Number(seller.aggregate_rating || seller.avg_rating || 0);
+    const n = seller.review_count || seller.total_reviews || 0;
+    if (r > 0) {
+      ratingEl.textContent  = `★ ${r.toFixed(1)}${n ? ` (${n} review${n !== 1 ? 's' : ''})` : ''}`;
+      ratingEl.style.display = 'flex';
+    }
+  }
+
   const viewSellerBtn = document.getElementById('viewSellerBtn');
   if (sellerId) viewSellerBtn.href = `/pages/profile.html?id=${sellerId}`;
 

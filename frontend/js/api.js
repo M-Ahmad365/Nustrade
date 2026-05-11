@@ -5,7 +5,11 @@
  * All responses follow { success, data, message } / { success, error } envelope.
  */
 
-const API_BASE = 'http://localhost:4000/api/v1';
+// In production set window.NUSTRADE_API_URL in /js/config.js (loaded before this file).
+// Falls back to localhost for local development.
+const API_BASE = (typeof window !== 'undefined' && window.NUSTRADE_API_URL)
+  ? window.NUSTRADE_API_URL
+  : 'http://localhost:4000/api/v1';
 
 /**
  * Core fetch wrapper. Attaches auth header when token exists,

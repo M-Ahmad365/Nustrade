@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviews — NusTrade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="mainDrawer" aria-label="Main menu">
+  <div class="drawer-header">
+    <span class="navbar-logo"><span class="navbar-logo-mark">N</span> NusTrade</span>
+    <button class="btn-icon drawer-close" aria-label="Close menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <nav class="drawer-nav">
+    <a href="/index.html">Home</a>
+    <a href="/pages/my-listings.html">My Listings</a>
+    <a href="/pages/my-offers.html">My Offers</a>
+    <a href="/pages/wishlist.html">Saved</a>
+    <a href="/pages/chat.html">Messages</a>
+    <a href="/pages/transactions.html">Transactions</a>
+    <a href="/pages/reviews.html" class="active">Reviews</a>
+    <a href="/pages/notifications.html">Notifications</a>
+    <a href="/pages/profile.html">Profile</a>
+  </nav>
+</aside>
+
+<header class="navbar" id="navbar">
+  <div class="container navbar-inner">
+    <a href="/index.html" class="navbar-logo"><span class="navbar-logo-mark">N</span> NusTrade</a>
+    <nav class="navbar-links">
+      <a href="/index.html">Browse</a>
+      <a href="/pages/my-listings.html">My Listings</a>
+      <a href="/pages/transactions.html">Transactions</a>
+      <a href="/pages/reviews.html" style="color:var(--primary);">Reviews</a>
+    </nav>
+    <div class="navbar-right" style="margin-left:auto;">
+      <a href="/pages/notifications.html" class="btn-icon" aria-label="Notifications" style="position:relative;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </a>
+      <button class="btn-icon nav-menu-btn" aria-label="Open menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="container" style="max-width:760px; padding-top: var(--space-8); padding-bottom: var(--space-16);">
+
+    <h1 style="font-size: var(--text-2xl); font-weight:600; letter-spacing:-0.3px; margin-bottom: var(--space-6);">Reviews</h1>
+
+    <!-- Tabs: Leave Review | Reviews Received -->
+    <div style="border-bottom: 1px solid var(--hairline-soft); margin-bottom: var(--space-6); display:flex; gap:0;">
+      <button class="tab-btn active" data-tab="pending" style="padding: var(--space-3) var(--space-4); border:none; background:none; cursor:pointer; font-size: var(--text-base); font-weight:500; color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom:-1px;">Leave Review</button>
+      <button class="tab-btn" data-tab="received" style="padding: var(--space-3) var(--space-4); border:none; background:none; cursor:pointer; font-size: var(--text-base); font-weight:500; color: var(--steel); border-bottom: 2px solid transparent; margin-bottom:-1px;">Reviews Received</button>
+    </div>
+
+    <!-- Leave Review tab: completed transactions needing a review -->
+    <div id="tabPending">
+      <p style="font-size:var(--text-sm); color:var(--steel); margin-bottom: var(--space-4);">Completed transactions where you haven't left a review yet.</p>
+      <div id="pendingList"><p style="color:var(--stone);">Loading…</p></div>
+    </div>
+
+    <!-- Reviews Received tab -->
+    <div id="tabReceived" style="display:none;">
+      <div id="receivedList"><p style="color:var(--stone);">Loading…</p></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ── Review modal ─────────────────────────────────────────────── -->
+<div id="reviewModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; display:none; align-items:center; justify-content:center;">
+  <div style="background:var(--surface); border-radius:var(--radius-lg); padding: var(--space-6); width:90%; max-width:480px; box-shadow: var(--shadow-xl);">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--space-4);">
+      <h2 style="font-size:var(--text-lg); font-weight:600;">Rate <span id="reviewTargetName">seller</span></h2>
+      <button class="btn-icon" id="closeReviewModal" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div style="margin-bottom:var(--space-4);">
+      <div style="font-size:var(--text-sm); color:var(--steel); margin-bottom:var(--space-2);">Your rating</div>
+      <div id="reviewStars" style="display:flex; gap: var(--space-1);"></div>
+      <div id="reviewStarError" class="form-error" style="display:none; margin-top:var(--space-2);"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="reviewComment">Comment (optional)</label>
+      <textarea class="form-textarea" id="reviewComment" rows="3" placeholder="Tell others about your experience…" style="resize:vertical;"></textarea>
+    </div>
+
+    <div style="display:flex; gap:var(--space-3); justify-content:flex-end; margin-top:var(--space-4);">
+      <button class="btn btn-ghost" id="reviewCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="reviewSubmitBtn">Submit review</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<div class="sunset-stripe"></div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/router.js"></script>
+<script src="../js/pages/reviews.js"></script>
+</body>
+</html>

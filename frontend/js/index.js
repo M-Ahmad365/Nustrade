@@ -416,6 +416,13 @@ function renderCard(listing) {
         <div class="card-meta">
           ${listing.location || listing.hostel_name ? `<span>${escapeHtml(listing.location || listing.hostel_name)}</span><span class="card-meta-sep">·</span>` : ''}
           <span>${ago}</span>
+          ${listing.seller_rating > 0 || listing.seller?.avg_rating > 0 || listing.avg_rating > 0
+            ? (() => {
+                const r = Number(listing.seller_rating || listing.seller?.avg_rating || listing.avg_rating);
+                const n = listing.review_count || listing.seller?.review_count || 0;
+                return r ? `<span class="card-meta-sep">·</span><span style="color:#fa520f;">★ ${r.toFixed(1)}</span>${n ? `<span style="color:var(--stone);"> (${n})</span>` : ''}` : '';
+              })()
+            : ''}
         </div>
       </div>
 
